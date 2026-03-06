@@ -4,6 +4,7 @@ import { PRODUCT_CATEGORIES, PRODUCTS } from '../constants';
 import { SectionHeader } from '../components/UI';
 import { ArrowLeft, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { API_BASE } from '../api';
+import { resolveImageUrl } from '../utils/media';
 
 export const ProductDetail = () => {
   const { productId } = useParams();
@@ -50,8 +51,9 @@ export const ProductDetail = () => {
     .filter((p) => p.category === product.category && (p._id || p.id) !== (product._id || product.id))
     .slice(0, 3);
 
-  const productImage = product.image || product.images?.[0] || '';
-  const isDocxImage = productImage.startsWith('/assets/docx/');
+  const rawProductImage = product.image || product.images?.[0] || '';
+  const productImage = resolveImageUrl(rawProductImage);
+  const isDocxImage = rawProductImage.startsWith('/assets/docx/');
 
   return (
     <div className="pt-24 min-h-screen bg-slate-50">
@@ -142,7 +144,7 @@ export const ProductDetail = () => {
                 >
                   <div className={`aspect-[4/3] ${(item.image || item.images?.[0] || '').startsWith('/assets/docx/') ? 'bg-slate-50' : 'bg-white'}`}>
                     <img
-                      src={item.image || item.images?.[0] || ''}
+                      src={resolveImageUrl(item.image || item.images?.[0] || '')}
                       alt={item.name}
                       className={`w-full h-full ${(item.image || item.images?.[0] || '').startsWith('/assets/docx/') ? 'object-contain p-4' : 'object-cover'}`}
                     />

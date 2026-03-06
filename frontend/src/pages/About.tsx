@@ -4,6 +4,7 @@ import { SectionHeader } from '../components/UI';
 import { COMPANY_NAME } from '../constants';
 import { Target, Eye, Heart, Shield, Users } from 'lucide-react';
 import { API_BASE } from '../api';
+import { resolveImageUrl } from '../utils/media';
 
 export const About = () => {
   const [settings, setSettings] = useState<any>({});
@@ -69,7 +70,7 @@ export const About = () => {
       <section className="bg-primary py-16 md:py-24 text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <img
-            src={about.heroImage || 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80'}
+            src={resolveImageUrl(about.heroImage) || 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80'}
             alt="Background"
             className="w-full h-full object-cover"
             referrerPolicy="no-referrer"
@@ -116,7 +117,7 @@ export const About = () => {
             </div>
             <div className="rounded-3xl overflow-hidden shadow-2xl">
               <img
-                src={about.image || 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80'}
+                src={resolveImageUrl(about.image) || 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80'}
                 alt="Our Office"
                 className="w-full h-[420px] object-cover"
                 referrerPolicy="no-referrer"

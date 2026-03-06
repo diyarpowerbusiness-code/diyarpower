@@ -1,4 +1,5 @@
 export const API_BASE = import.meta.env.VITE_API_URL || '';
+export const PUBLIC_SITE_URL = import.meta.env.VITE_PUBLIC_SITE_URL || '';
 
 export const pingApi = async () => {
   if (!API_BASE) return;

@@ -1,9 +1,10 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { ArrowRight, CheckCircle2, ShieldCheck, Truck, Clock, Award } from 'lucide-react';
-import { SectionHeader, ServiceCard } from '../components/UI';
+import { CatalogProductCard, SectionHeader, ServiceCard } from '../components/UI';
 import { PARTNERS } from '../constants';
 import { Link } from 'react-router-dom';
 import { API_BASE } from '../api';
+import { resolveImageUrl } from '../utils/media';
 
 export const Home = () => {
   const defaultServices = [
@@ -40,6 +41,7 @@ export const Home = () => {
   ];
 
   const [services, setServices] = useState<any[]>(defaultServices);
+  const [products, setProducts] = useState<any[]>([]);
   const [businessAreas, setBusinessAreas] = useState<any[]>(defaultBusinessAreas);
   const [partners, setPartners] = useState<any[]>(PARTNERS);
   const [settings, setSettings] = useState<any>({});
@@ -75,7 +77,7 @@ export const Home = () => {
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/85 to-slate-900/40 z-10" />
           <img
-            src={settings.home?.heroBackgroundImage || 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80'}
+            src={resolveImageUrl(settings.home?.heroBackgroundImage) || 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80'}
             alt="IT Solutions"
             className="w-full h-full object-cover opacity-40"
             referrerPolicy="no-referrer"
@@ -157,7 +159,7 @@ export const Home = () => {
             <div className="relative">
               <div className="aspect-square rounded-3xl overflow-hidden shadow-2xl">
                 <img
-                  src={settings.home?.whoImage || 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80'}
+                  src={resolveImageUrl(settings.home?.whoImage) || 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80'}
                   alt="Our Office"
                   className="w-full h-full object-cover"
                   referrerPolicy="no-referrer"
@@ -221,7 +223,7 @@ export const Home = () => {
               return (
                 <div key={i} className="rounded-3xl bg-white border border-slate-100 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col">
                   <div className="aspect-[16/9] overflow-hidden bg-white">
-                    <img src={sector.image} alt={sector.title} className="w-full h-full object-cover object-center" loading="lazy" />
+                    <img src={resolveImageUrl(sector.image)} alt={sector.title} className="w-full h-full object-cover object-center" loading="lazy" />
                   </div>
                   <div className="p-8 flex flex-col flex-grow">
                     <h3 className="text-xl font-bold text-primary mb-3">{sector.title}</h3>
@@ -233,6 +235,27 @@ export const Home = () => {
                 </div>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+
+      {/* Products Preview */}
+      <section className="py-20 bg-white border-y border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeader
+            title="Featured Products"
+            subtitle="A snapshot of our most requested product categories and solutions."
+          />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {(products.length ? products : []).map((product: any) => (
+              <CatalogProductCard key={product._id || product.name} product={product} />
+            ))}
+          </div>
+          <div className="mt-10 text-center">
+            <Link to="/products" className="inline-flex items-center text-blue-600 font-semibold hover:underline">
+              View All Products <ArrowRight className="ml-1" size={18} />
+            </Link>
           </div>
         </div>
       </section>
@@ -310,7 +333,7 @@ export const Home = () => {
                   className="group bg-white border border-slate-100 rounded-2xl h-24 flex items-center justify-center shadow-sm hover:shadow-md hover:border-blue-200 transition-all"
                 >
                   <img
-                    src={partner.logo}
+                    src={resolveImageUrl(partner.logo)}
                     alt={partner.name}
                     className={`object-contain grayscale group-hover:grayscale-0 transition-all ${partner.name === 'Autodesk' ? 'h-16 w-40' : 'h-10 w-28'}`}
                   />

@@ -4,6 +4,7 @@ import { PRODUCT_CATEGORIES, PRODUCTS } from '../constants';
 import { CatalogProductCard, SectionHeader } from '../components/UI';
 import { ArrowLeft } from 'lucide-react';
 import { API_BASE } from '../api';
+import { resolveImageUrl } from '../utils/media';
 
 export const CategoryPage = () => {
   const { categorySlug } = useParams();
@@ -55,7 +56,7 @@ export const CategoryPage = () => {
       {/* Header */}
       <section className="bg-primary py-12 md:py-16 text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
-          <img src={category.image} alt={category.title} className="w-full h-full object-cover" />
+          <img src={resolveImageUrl(category.image)} alt={category.title} className="w-full h-full object-cover" />
         </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <Link to="/products" className="inline-flex items-center text-sm text-slate-300 hover:text-white mb-6">

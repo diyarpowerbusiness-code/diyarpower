@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { api } from './api';
 import { API_BASE } from '../api';
+import { resolveImageUrl } from './resolveImage';
 
 type UploadFieldProps = {
   label: string;
@@ -56,7 +57,7 @@ export const UploadField = ({ label, value, onChange, onUploadingChange }: Uploa
       <label className="text-sm font-semibold text-slate-700">{label}</label>
       {value && (
         <div className="border border-slate-200 rounded-xl p-2 w-full">
-          <img src={value} alt={label} className="w-full h-40 object-cover rounded-lg" />
+          <img src={resolveImageUrl(value)} alt={label} className="w-full h-40 object-cover rounded-lg" />
         </div>
       )}
       {previewUrl && (
@@ -73,10 +74,10 @@ export const UploadField = ({ label, value, onChange, onUploadingChange }: Uploa
             <div className="font-semibold text-slate-700">Upload image</div>
             <div className="text-xs text-slate-500">Click to choose a file from your PC</div>
           </div>
-            <input type="file" accept="image/*" className="hidden" onChange={(e) => onSelectFile(e.target.files?.[0] || null)} />
-          </label>
+          <input type="file" accept="image/*" className="hidden" onChange={(e) => onSelectFile(e.target.files?.[0] || null)} />
+        </label>
         {file && <span className="text-xs text-slate-500">{file.name}</span>}
-        {uploading && <span className="text-xs text-blue-600">Uploading… please wait</span>}
+        {uploading && <span className="text-xs text-blue-600">Uploading... please wait</span>}
         {error && <span className="text-xs text-red-600">{error}</span>}
         {value && !uploading && (
           <button type="button" onClick={() => onChange('')} className="text-sm text-slate-600 hover:text-slate-900 w-fit">

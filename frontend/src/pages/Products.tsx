@@ -3,6 +3,7 @@ import { PRODUCT_CATEGORIES } from '../constants';
 import { SectionHeader } from '../components/UI';
 import { Link } from 'react-router-dom';
 import { API_BASE } from '../api';
+import { resolveImageUrl } from '../utils/media';
 
 export const Products = () => {
   const [categories, setCategories] = useState<any[]>(PRODUCT_CATEGORIES.map((c) => ({
@@ -64,7 +65,7 @@ export const Products = () => {
               >
                 <div className="aspect-[16/9] overflow-hidden bg-white">
                   <img
-                    src={category.image}
+                    src={resolveImageUrl(category.image)}
                     alt={category.name}
                     className="w-full h-full object-cover object-center"
                     loading="lazy"

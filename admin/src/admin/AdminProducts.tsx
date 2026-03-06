@@ -1,6 +1,7 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { api } from './api';
 import { UploadField } from './UploadField';
+import { resolveImageUrl } from './resolveImage';
 
 const empty = { name: '', category: '', description: '', features: '', images: '', status: 'active' };
 
@@ -174,7 +175,7 @@ export const AdminProducts = () => {
                           {(() => {
                             const img = (p.image || (Array.isArray(p.images) ? p.images[0] : p.images)) as string | undefined;
                             return img ? (
-                              <img src={img} alt={p.name} className="w-full h-full object-cover" />
+                            <img src={resolveImageUrl(img)} alt={p.name} className="w-full h-full object-cover" />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center text-xs text-slate-400">No image</div>
                             );

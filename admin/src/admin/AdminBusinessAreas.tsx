@@ -1,6 +1,7 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { api } from './api';
 import { UploadField } from './UploadField';
+import { resolveImageUrl } from './resolveImage';
 
 const empty = { title: '', description: '', image: '', link: '' };
 
@@ -80,7 +81,7 @@ export const AdminBusinessAreas = ({ embedded = false }: { embedded?: boolean })
               <div key={item._id} className="border border-slate-100 rounded-2xl p-4 bg-slate-50">
                 <div className="aspect-[16/9] bg-white rounded-xl overflow-hidden border border-slate-100 mb-3">
                   {item.image ? (
-                    <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                    <img src={resolveImageUrl(item.image)} alt={item.title} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-xs text-slate-400">No image</div>
                   )}

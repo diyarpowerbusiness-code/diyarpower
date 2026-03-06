@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Phone, Mail, ChevronDown, MapPin } from 'lucide-react';
 import { COMPANY_NAME } from '../constants';
 import { API_BASE } from '../api';
+import { resolveImageUrl } from '../utils/media';
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -35,7 +36,7 @@ export const Navbar = () => {
   }, []);
 
   const companyName = settings.websiteName || COMPANY_NAME;
-  const logoUrl = settings.logo;
+  const logoUrl = resolveImageUrl(settings.logo || '/logo.png');
 
   return (
     <nav className={`sticky top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur border-b border-slate-200 py-3 shadow-sm' : 'bg-white/95 backdrop-blur border-b border-slate-200 py-4 shadow-sm'}`}>
@@ -214,7 +215,7 @@ export const Footer = () => {
           <div>
             <div className="flex items-center space-x-2 mb-6">
               {settings.logo ? (
-                <img src={settings.logo} alt={companyName} className="w-8 h-8 object-contain rounded" />
+                <img src={resolveImageUrl(settings.logo)} alt={companyName} className="w-8 h-8 object-contain rounded" />
               ) : (
                 <div className="w-8 h-8 bg-white rounded flex items-center justify-center">
                   <span className="text-primary font-bold">D</span>

@@ -1,6 +1,7 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { api } from './api';
 import { UploadField } from './UploadField';
+import { resolveImageUrl } from './resolveImage';
 
 const empty = { name: '', logo: '', url: '' };
 
@@ -74,7 +75,7 @@ export const AdminPartners = ({ embedded = false }: { embedded?: boolean }) => {
               <div key={item._id} className="border border-slate-100 rounded-2xl p-4 bg-slate-50">
                 <div className="h-16 bg-white border border-slate-100 rounded-xl flex items-center justify-center mb-3">
                   {item.logo ? (
-                    <img src={item.logo} alt={item.name} className="max-h-10 max-w-[160px] object-contain" />
+                    <img src={resolveImageUrl(item.logo)} alt={item.name} className="max-h-10 max-w-[160px] object-contain" />
                   ) : (
                     <span className="text-xs text-slate-400">No logo</span>
                   )}

@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import * as Icons from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Product, Service } from '../types';
+import { resolveImageUrl } from '../utils/media';
 
 export const SectionHeader = ({
   title,
@@ -25,8 +26,9 @@ export const SectionHeader = ({
 
 export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
   const productId = (product as any)._id || product.id;
-  const image = (product as any).image || (product as any).images?.[0] || '';
-  const isDocxImage = image.startsWith('/assets/docx/');
+  const rawImage = (product as any).image || (product as any).images?.[0] || '';
+  const image = resolveImageUrl(rawImage);
+  const isDocxImage = rawImage.startsWith('/assets/docx/');
 
   return (
     <div className="bg-white rounded-2xl overflow-hidden border border-slate-100 card-hover flex flex-col h-full">
@@ -66,8 +68,9 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
 
 export const CatalogProductCard: React.FC<{ product: Product }> = ({ product }) => {
   const productId = (product as any)._id || product.id;
-  const image = (product as any).image || (product as any).images?.[0] || '';
-  const isDocxImage = image.startsWith('/assets/docx/');
+  const rawImage = (product as any).image || (product as any).images?.[0] || '';
+  const image = resolveImageUrl(rawImage);
+  const isDocxImage = rawImage.startsWith('/assets/docx/');
 
   return (
     <div className="bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-shadow flex flex-col h-full">
