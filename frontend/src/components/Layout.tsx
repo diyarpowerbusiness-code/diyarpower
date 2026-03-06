@@ -1,11 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Phone, Mail, ChevronDown } from 'lucide-react';
+import { Menu, X, Phone, Mail, ChevronDown, MapPin } from 'lucide-react';
 import { COMPANY_NAME } from '../constants';
+import { API_BASE } from '../api';
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [productsOpen, setProductsOpen] = useState(false);
+  const [settings, setSettings] = useState<any>({});
+  const [categories, setCategories] = useState<any[]>([
+    { name: 'IT Solutions', slug: 'it-solutions' },
+    { name: 'Paper Products', slug: 'paper-products' },
+    { name: 'Medical Supplies', slug: 'medical-supplies' },
+    { name: 'Packaging Materials', slug: 'packaging-materials' }
+  ]);
   const location = useLocation();
 
   useEffect(() => {
@@ -14,27 +23,34 @@ export const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'About', path: '/about' },
-    { name: 'Services', path: '/services' },
-    { name: 'Contact', path: '/contact' },
-  ];
+  useEffect(() => {
+    fetch(`${API_BASE}/api/settings`)
+      .then((r) => r.json())
+      .then((data) => data && Object.keys(data).length > 0 && setSettings(data))
+      .catch(() => null);
+    fetch(`${API_BASE}/api/categories`)
+      .then((r) => r.json())
+      .then((data) => Array.isArray(data) && data.length > 0 && setCategories(data))
+      .catch(() => null);
+  }, []);
 
-  const isHomePage = location.pathname === '/';
-  const isDarkHero = isHomePage && !scrolled;
-  const [productsOpen, setProductsOpen] = useState(false);
+  const companyName = settings.websiteName || COMPANY_NAME;
+  const logoUrl = settings.logo;
 
   return (
     <nav className={`sticky top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur border-b border-slate-200 py-3 shadow-sm' : 'bg-white/95 backdrop-blur border-b border-slate-200 py-4 shadow-sm'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           <Link to="/" className="flex items-center space-x-2">
-            <div className="w-11 h-11 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-600/20">
-              <span className="text-white font-bold text-xl">D</span>
-            </div>
+            {logoUrl ? (
+              <img src={logoUrl} alt={companyName} className="w-11 h-11 object-contain rounded-lg" />
+            ) : (
+              <div className="w-11 h-11 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-600/20">
+                <span className="text-white font-bold text-xl">D</span>
+              </div>
+            )}
             <span className="font-display font-bold text-2xl tracking-tight text-slate-900">
-              {COMPANY_NAME}
+              {companyName}
             </span>
           </Link>
 
@@ -76,16 +92,10 @@ export const Navbar = () => {
                   >
                     All Products
                   </Link>
-                  {[
-                    { name: 'IT Solutions', path: '/products/category/it-solutions' },
-                    { name: 'Paper Products', path: '/products/category/paper-products' },
-                    { name: 'Thermal Labels', path: '/products/category/thermal-labels' },
-                    { name: 'Medical Supplies', path: '/products/category/medical-supplies' },
-                    { name: 'Packaging Materials', path: '/products/category/packaging-materials' }
-                  ].map((item) => (
+                  {categories.map((item) => (
                     <Link
-                      key={item.name}
-                      to={item.path}
+                      key={item.slug || item.name}
+                      to={`/products/category/${item.slug}`}
                       onClick={() => setProductsOpen(false)}
                       className="block px-3 py-2 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg"
                     >
@@ -135,7 +145,12 @@ export const Navbar = () => {
       {isOpen && (
         <div className="md:hidden bg-white border-b border-slate-200 animate-in slide-in-from-top duration-300">
           <div className="px-4 pt-2 pb-6 space-y-1">
-            {navLinks.map((link) => (
+            {[
+              { name: 'Home', path: '/' },
+              { name: 'About', path: '/about' },
+              { name: 'Services', path: '/services' },
+              { name: 'Contact', path: '/contact' }
+            ].map((link) => (
               <Link
                 key={link.name}
                 to={link.path}
@@ -150,16 +165,10 @@ export const Navbar = () => {
             <div className="px-3 pt-3">
               <p className="text-xs font-semibold text-slate-500 mb-2">Products</p>
               <div className="grid grid-cols-1 gap-1">
-                {[
-                  { name: 'IT Solutions', path: '/products/category/it-solutions' },
-                  { name: 'Paper Products', path: '/products/category/paper-products' },
-                  { name: 'Thermal Labels', path: '/products/category/thermal-labels' },
-                  { name: 'Medical Supplies', path: '/products/category/medical-supplies' },
-                  { name: 'Packaging Materials', path: '/products/category/packaging-materials' }
-                ].map((item) => (
+                {categories.map((item) => (
                   <Link
-                    key={item.name}
-                    to={item.path}
+                    key={item.slug || item.name}
+                    to={`/products/category/${item.slug}`}
                     onClick={() => setIsOpen(false)}
                     className="block px-3 py-3 text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg"
                   >
@@ -185,25 +194,39 @@ export const Navbar = () => {
 };
 
 export const Footer = () => {
+  const [settings, setSettings] = useState<any>({});
+
+  useEffect(() => {
+    fetch(`${API_BASE}/api/settings`)
+      .then((r) => r.json())
+      .then((data) => data && Object.keys(data).length > 0 && setSettings(data))
+      .catch(() => null);
+  }, []);
+
+  const companyName = settings.websiteName || COMPANY_NAME;
+  const mapQuery = encodeURIComponent(settings.contactAddress || 'Mahabubnagar, Telangana, India');
+  const mapLink = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
+
   return (
     <footer className="bg-primary text-white pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           <div>
             <div className="flex items-center space-x-2 mb-6">
-              <div className="w-8 h-8 bg-white rounded flex items-center justify-center">
-                <span className="text-primary font-bold">D</span>
-              </div>
+              {settings.logo ? (
+                <img src={settings.logo} alt={companyName} className="w-8 h-8 object-contain rounded" />
+              ) : (
+                <div className="w-8 h-8 bg-white rounded flex items-center justify-center">
+                  <span className="text-primary font-bold">D</span>
+                </div>
+              )}
               <span className="font-display font-bold text-lg tracking-tight">
-                {COMPANY_NAME}
+                {companyName}
               </span>
             </div>
             <p className="text-slate-400 text-sm leading-relaxed mb-6">
-              Diyar Power Link LLP and Diyar Computers: Your "One Shop for All IT Needs". Providing high-quality IT hardware, specialized paper products, medical supplies, and industrial packaging solutions across India.
+              {settings.footerText || 'Diyar Power Link LLP and Diyar Computers: Your One Shop for All IT Needs. Providing high-quality IT hardware, specialized paper products, medical supplies, and industrial packaging solutions across India.'}
             </p>
-            <div className="flex space-x-4">
-              {/* Social icons could go here */}
-            </div>
           </div>
 
           <div>
@@ -220,11 +243,18 @@ export const Footer = () => {
           <div>
             <h4 className="font-display font-semibold text-lg mb-6">Our Divisions</h4>
             <ul className="space-y-4 text-sm text-slate-400">
-              <li>IT Solutions & Infrastructure</li>
-              <li>Paper Products & Thermal Rolls</li>
-              <li>Medical Supplies & Wristbands</li>
-              <li>Packaging Materials & Tools</li>
-              <li>Technical Services & Support</li>
+              {(settings.footerDivisions && settings.footerDivisions.length > 0
+                ? settings.footerDivisions
+                : [
+                    'IT Solutions & Infrastructure',
+                    'Paper Products & Thermal Rolls',
+                    'Medical Supplies & Wristbands',
+                    'Packaging Materials & Tools',
+                    'Technical Services & Support'
+                  ]
+              ).map((item: string, idx: number) => (
+                <li key={idx}>{item}</li>
+              ))}
             </ul>
           </div>
 
@@ -232,30 +262,34 @@ export const Footer = () => {
             <h4 className="font-display font-semibold text-lg mb-6">Contact Us</h4>
             <ul className="space-y-4 text-sm text-slate-400">
               <li className="flex items-start space-x-3">
-                <span className="mt-1">📍</span>
+                <MapPin size={16} className="mt-0.5" />
                 <a
-                  href="https://www.google.com/maps/search/?api=1&query=Building%2010-6-87%2F2%2C%20Street%20Rural%20Police%20Station%2C%20Srinivasa%20Colony%2C%20Mahabubnagar%20509001%2C%20Telangana%2C%20India"
+                  href={mapLink}
                   target="_blank"
                   rel="noreferrer"
                   className="hover:text-white transition-colors"
                 >
-                  Building 10-6-87/2, Street Rural Police Station, Srinivasa Colony, Mahabubnagar – 509001, Telangana, India
+                  {settings.contactAddress || 'Building 10-6-87/2, Street Rural Police Station, Srinivasa Colony, Mahabubnagar - 509001, Telangana, India'}
                 </a>
               </li>
               <li className="flex items-center space-x-3">
                 <Phone size={16} />
-                <a href="tel:+918688050498" className="hover:text-white transition-colors">+91 8688050498</a>
+                <a href={`tel:${settings.contactPhone || '+918688050498'}`} className="hover:text-white transition-colors">
+                  {settings.contactPhone || '+91 8688050498'}
+                </a>
               </li>
               <li className="flex items-center space-x-3">
                 <Mail size={16} />
-                <a href="mailto:info@diyarpowerlink.com" className="hover:text-white transition-colors">info@diyarpowerlink.com</a>
+                <a href={`mailto:${settings.contactEmail || 'info@diyarpowerlink.com'}`} className="hover:text-white transition-colors">
+                  {settings.contactEmail || 'info@diyarpowerlink.com'}
+                </a>
               </li>
             </ul>
           </div>
         </div>
         
         <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
-          <p>© {new Date().getFullYear()} {COMPANY_NAME}. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} {companyName}. All rights reserved.</p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <a href="#" className="hover:text-white">Privacy Policy</a>
             <a href="#" className="hover:text-white">Terms of Service</a>

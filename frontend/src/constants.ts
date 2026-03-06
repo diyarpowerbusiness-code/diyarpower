@@ -111,56 +111,6 @@ export const PRODUCTS: Product[] = [
     features: ['2-3 Ply Options', 'Multiple Colors', 'Logo Printing', 'Clean & Efficient']
   },
 
-  // Thermal Labels (sub-category)
-  {
-    id: 'tl-shipping',
-    name: 'Shipping Labels',
-    category: 'Thermal Labels',
-    description: 'Durable shipping labels for logistics and warehousing.',
-    image: '/assets/docx/image3.png',
-    features: ['Strong Adhesive', 'Smudge Resistant', 'Barcode Ready', 'Various Sizes']
-  },
-  {
-    id: 'tl-a4',
-    name: 'A4 Labels',
-    category: 'Thermal Labels',
-    description: 'A4 sheet labels for office and warehouse labeling.',
-    image: '/assets/docx/image3.png',
-    features: ['Easy Printing', 'Standard A4', 'Multiple Layouts', 'Clean Finish']
-  },
-  {
-    id: 'tl-linerless',
-    name: 'Linerless Labels',
-    category: 'Thermal Labels',
-    description: 'Eco-friendly linerless labels for efficient labeling.',
-    image: '/assets/docx/image3.png',
-    features: ['Less Waste', 'High Adhesion', 'Cost Efficient', 'Retail Ready']
-  },
-  {
-    id: 'tl-dymo',
-    name: 'Dymo Labels',
-    category: 'Thermal Labels',
-    description: 'Dymo compatible labels for office and retail needs.',
-    image: '/assets/docx/image3.png',
-    features: ['Dymo Compatible', 'Clear Print', 'Multiple Sizes', 'Easy Use']
-  },
-  {
-    id: 'tl-package',
-    name: 'Package Labels',
-    category: 'Thermal Labels',
-    description: 'Package labels for shipping, inventory, and tracking.',
-    image: '/assets/docx/image3.png',
-    features: ['Tracking Ready', 'Strong Adhesive', 'Barcode Support', 'Durable']
-  },
-  {
-    id: 'tl-custom',
-    name: 'Custom Labels',
-    category: 'Thermal Labels',
-    description: 'Custom label sizes, shapes, and branding options.',
-    image: '/assets/docx/image3.png',
-    features: ['Custom Sizes', 'Branding Options', 'Professional Finish', 'Bulk Orders']
-  },
-
   // Medical Supplies
   {
     id: 'med-patient',
@@ -352,13 +302,6 @@ export const PRODUCT_CATEGORIES = [
     description: 'Thermal paper rolls, ATM paper, ECG paper, cinema ticket paper, jumbo rolls, and carbonless paper.',
     image: '/assets/docx/paper products.png',
     productIds: ['pp-thermal-rolls', 'pp-atm', 'pp-ecg', 'pp-cinema', 'pp-jumbo', 'pp-carbonless']
-  },
-  {
-    slug: 'thermal-labels',
-    title: 'Thermal Labels',
-    description: 'Shipping, A4, linerless, Dymo, package, and custom thermal labels.',
-    image: '/assets/docx/thermal labels.png',
-    productIds: ['tl-shipping', 'tl-a4', 'tl-linerless', 'tl-dymo', 'tl-package', 'tl-custom']
   },
   {
     slug: 'medical-supplies',

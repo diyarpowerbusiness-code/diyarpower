@@ -1,12 +1,27 @@
-import React from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { PRODUCT_CATEGORIES, PRODUCTS } from '../constants';
 import { SectionHeader } from '../components/UI';
 import { ArrowLeft, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { API_BASE } from '../api';
 
 export const ProductDetail = () => {
   const { productId } = useParams();
-  const product = PRODUCTS.find((p) => p.id === productId);
+  const [products, setProducts] = useState<any[]>(PRODUCTS);
+  const [categories, setCategories] = useState<any[]>(PRODUCT_CATEGORIES);
+
+  useEffect(() => {
+    fetch(`${API_BASE}/api/products`)
+      .then((r) => r.json())
+      .then((data) => Array.isArray(data) && data.length > 0 && setProducts(data))
+      .catch(() => null);
+    fetch(`${API_BASE}/api/categories`)
+      .then((r) => r.json())
+      .then((data) => Array.isArray(data) && data.length > 0 && setCategories(data))
+      .catch(() => null);
+  }, []);
+
+  const product = products.find((p) => (p._id || p.id) === productId);
 
   if (!product) {
     return (
@@ -30,11 +45,13 @@ export const ProductDetail = () => {
     );
   }
 
-  const isDocxImage = product.image.startsWith('/assets/docx/');
-  const category = PRODUCT_CATEGORIES.find((c) => c.productIds.includes(product.id));
-  const related = category
-    ? PRODUCTS.filter((p) => category.productIds.includes(p.id) && p.id !== product.id).slice(0, 3)
-    : PRODUCTS.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 3);
+  const category = categories.find((c: any) => (c.title || c.name) === product.category);
+  const related = products
+    .filter((p) => p.category === product.category && (p._id || p.id) !== (product._id || product.id))
+    .slice(0, 3);
+
+  const productImage = product.image || product.images?.[0] || '';
+  const isDocxImage = productImage.startsWith('/assets/docx/');
 
   return (
     <div className="pt-24 min-h-screen bg-slate-50">
@@ -60,7 +77,7 @@ export const ProductDetail = () => {
             <div className={`rounded-3xl border border-slate-100 overflow-hidden ${isDocxImage ? 'bg-slate-50' : 'bg-white'}`}>
               <div className="aspect-[4/3] w-full">
                 <img
-                  src={product.image}
+                  src={productImage}
                   alt={product.name}
                   className={`w-full h-full ${isDocxImage ? 'object-contain p-6' : 'object-cover'}`}
                 />
@@ -80,7 +97,7 @@ export const ProductDetail = () => {
                 <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100">
                   <h3 className="text-lg font-semibold text-primary mb-4">Key Highlights</h3>
                   <ul className="space-y-3">
-                    {product.features.map((feature, i) => (
+                    {product.features.map((feature: string, i: number) => (
                       <li key={i} className="flex items-start text-sm text-slate-600">
                         <CheckCircle2 size={16} className="text-green-500 mt-0.5 mr-3 flex-shrink-0" />
                         {feature}
@@ -119,15 +136,15 @@ export const ProductDetail = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {related.map((item) => (
                 <Link
-                  key={item.id}
-                  to={`/products/${item.id}`}
+                  key={item._id || item.id}
+                  to={`/products/${item._id || item.id}`}
                   className="bg-white rounded-2xl border border-slate-100 hover:shadow-md transition-shadow overflow-hidden"
                 >
-                  <div className={`aspect-[4/3] ${item.image.startsWith('/assets/docx/') ? 'bg-slate-50' : 'bg-white'}`}>
+                  <div className={`aspect-[4/3] ${(item.image || item.images?.[0] || '').startsWith('/assets/docx/') ? 'bg-slate-50' : 'bg-white'}`}>
                     <img
-                      src={item.image}
+                      src={item.image || item.images?.[0] || ''}
                       alt={item.name}
-                      className={`w-full h-full ${item.image.startsWith('/assets/docx/') ? 'object-contain p-4' : 'object-cover'}`}
+                      className={`w-full h-full ${(item.image || item.images?.[0] || '').startsWith('/assets/docx/') ? 'object-contain p-4' : 'object-cover'}`}
                     />
                   </div>
                   <div className="p-5">

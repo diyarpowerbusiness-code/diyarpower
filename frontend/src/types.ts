@@ -12,6 +12,7 @@ export interface Service {
   title: string;
   description: string;
   icon: string;
+  featured?: boolean;
 }
 
 export interface Partner {

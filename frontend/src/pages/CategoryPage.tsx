@@ -1,12 +1,30 @@
-import React from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { PRODUCT_CATEGORIES, PRODUCTS } from '../constants';
 import { CatalogProductCard, SectionHeader } from '../components/UI';
 import { ArrowLeft } from 'lucide-react';
+import { API_BASE } from '../api';
 
 export const CategoryPage = () => {
   const { categorySlug } = useParams();
-  const category = PRODUCT_CATEGORIES.find((c) => c.slug === categorySlug);
+  const [category, setCategory] = useState<any>(PRODUCT_CATEGORIES.find((c) => c.slug === categorySlug));
+  const [products, setProducts] = useState<any[]>(PRODUCTS);
+
+  useEffect(() => {
+    fetch(`${API_BASE}/api/products`)
+      .then((r) => r.json())
+      .then((data) => Array.isArray(data) && data.length > 0 && setProducts(data))
+      .catch(() => null);
+    fetch(`${API_BASE}/api/categories`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          const found = data.find((c: any) => c.slug === categorySlug);
+          if (found) setCategory(found);
+        }
+      })
+      .catch(() => null);
+  }, []);
 
   if (!category) {
     return (
@@ -29,7 +47,8 @@ export const CategoryPage = () => {
     );
   }
 
-  const categoryProducts = PRODUCTS.filter((p) => category.productIds.includes(p.id));
+  const categoryName = category?.title || category?.name;
+  const categoryProducts = products.filter((p) => p.category === categoryName);
 
   return (
     <div className="pt-24 min-h-screen bg-slate-50">
@@ -43,7 +62,7 @@ export const CategoryPage = () => {
             <ArrowLeft size={16} className="mr-2" />
             Back to Categories
           </Link>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold mb-3">{category.title}</h1>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold mb-3">{category.title || category.name}</h1>
           <p className="text-base sm:text-lg text-slate-300 max-w-2xl">{category.description}</p>
         </div>
       </section>
@@ -52,12 +71,12 @@ export const CategoryPage = () => {
       <section className="py-16 bg-grid">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
-            title={`${category.title} Products`}
+            title={`${category.title || category.name} Products`}
             subtitle="Explore the full range of products in this category."
           />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {categoryProducts.map((product) => (
-              <CatalogProductCard key={product.id} product={product} />
+              <CatalogProductCard key={product._id || product.id} product={product} />
             ))}
           </div>
         </div>

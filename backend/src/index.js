@@ -1,5 +1,26 @@
 ﻿import express from 'express';
 import cors from 'cors';
+import dotenv from 'dotenv';
+import mongoose from 'mongoose';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs/promises';
+import { fileURLToPath } from 'url';
+
+import { Product } from './models/Product.js';
+import { BusinessArea } from './models/BusinessArea.js';
+import { Service } from './models/Service.js';
+import { Partner } from './models/Partner.js';
+import { Message } from './models/Message.js';
+import { Media } from './models/Media.js';
+import { Settings } from './models/Settings.js';
+import { Category } from './models/Category.js';
+import { defaultCategories, defaultBusinessAreas, defaultServices, defaultPartners, defaultProducts } from './seed/defaults.js';
+import { defaultSettings } from './seed/defaultSettings.js';
+
+dotenv.config({ override: true });
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -7,10 +28,232 @@ const PORT = process.env.PORT || 4000;
 app.use(cors());
 app.use(express.json());
 
-app.get('/', (req, res) => {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const uploadsDir = path.join(__dirname, '..', 'uploads');
+// Ensure uploads directory exists for multer
+fs.mkdir(uploadsDir, { recursive: true }).catch(() => {});
+app.use('/uploads', express.static(uploadsDir));
+
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => cb(null, uploadsDir),
+  filename: (_req, file, cb) => {
+    const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+    const ext = path.extname(file.originalname);
+    cb(null, `${unique}${ext}`);
+  }
+});
+const upload = multer({ storage });
+
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@diyarpowerlink.com';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
+const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH || '';
+const JWT_SECRET = process.env.JWT_SECRET || 'change-this-secret';
+
+const requireAuth = (req, res, next) => {
+  const header = req.headers.authorization || '';
+  const token = header.replace('Bearer ', '');
+  if (!token) return res.status(401).json({ error: 'Unauthorized' });
+  try {
+    req.user = jwt.verify(token, JWT_SECRET);
+    return next();
+  } catch (err) {
+    return res.status(401).json({ error: 'Invalid token' });
+  }
+};
+
+// Auth
+app.post('/api/auth/login', async (req, res) => {
+  const { email, password } = req.body || {};
+  if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
+
+  if (email !== ADMIN_EMAIL) return res.status(401).json({ error: 'Invalid credentials' });
+
+  let valid = false;
+  if (ADMIN_PASSWORD_HASH) {
+    valid = await bcrypt.compare(password, ADMIN_PASSWORD_HASH);
+  } else {
+    valid = password === ADMIN_PASSWORD;
+  }
+
+  if (!valid) return res.status(401).json({ error: 'Invalid credentials' });
+
+  const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: '12h' });
+  res.json({ token });
+});
+
+// Dashboard summary
+app.get('/api/dashboard/summary', requireAuth, async (_req, res) => {
+  const [products, categories, messages] = await Promise.all([
+    Product.countDocuments(),
+    Category.countDocuments(),
+    Message.countDocuments()
+  ]);
+
+  res.json({
+    totalProducts: products,
+    totalCategories: categories,
+    totalMessages: messages,
+    recentUpdates: new Date().toISOString()
+  });
+});
+
+// Categories CRUD (public GET)
+app.get('/api/categories', async (_req, res) => res.json(await Category.find().sort({ createdAt: -1 })));
+app.post('/api/categories', requireAuth, async (req, res) => res.json(await Category.create(req.body)));
+app.put('/api/categories/:id', requireAuth, async (req, res) => res.json(await Category.findByIdAndUpdate(req.params.id, req.body, { new: true })));
+app.delete('/api/categories/:id', requireAuth, async (req, res) => {
+  await Category.findByIdAndDelete(req.params.id);
+  res.json({ success: true });
+});
+
+// Products CRUD (public GET)
+app.get('/api/products', async (_req, res) => res.json(await Product.find().sort({ createdAt: -1 })));
+app.post('/api/products', requireAuth, async (req, res) => res.json(await Product.create(req.body)));
+app.put('/api/products/:id', requireAuth, async (req, res) => res.json(await Product.findByIdAndUpdate(req.params.id, req.body, { new: true })));
+app.delete('/api/products/:id', requireAuth, async (req, res) => {
+  await Product.findByIdAndDelete(req.params.id);
+  res.json({ success: true });
+});
+
+// Business Areas CRUD (public GET)
+app.get('/api/business-areas', async (_req, res) => res.json(await BusinessArea.find().sort({ createdAt: -1 })));
+app.post('/api/business-areas', requireAuth, async (req, res) => res.json(await BusinessArea.create(req.body)));
+app.put('/api/business-areas/:id', requireAuth, async (req, res) => res.json(await BusinessArea.findByIdAndUpdate(req.params.id, req.body, { new: true })));
+app.delete('/api/business-areas/:id', requireAuth, async (req, res) => {
+  await BusinessArea.findByIdAndDelete(req.params.id);
+  res.json({ success: true });
+});
+
+// Services CRUD (public GET)
+app.get('/api/services', async (_req, res) => res.json(await Service.find().sort({ createdAt: -1 })));
+app.post('/api/services', requireAuth, async (req, res) => res.json(await Service.create(req.body)));
+app.put('/api/services/:id', requireAuth, async (req, res) => res.json(await Service.findByIdAndUpdate(req.params.id, req.body, { new: true })));
+app.delete('/api/services/:id', requireAuth, async (req, res) => {
+  await Service.findByIdAndDelete(req.params.id);
+  res.json({ success: true });
+});
+
+// Partners CRUD (public GET)
+app.get('/api/partners', async (_req, res) => res.json(await Partner.find().sort({ createdAt: -1 })));
+app.post('/api/partners', requireAuth, async (req, res) => res.json(await Partner.create(req.body)));
+app.put('/api/partners/:id', requireAuth, async (req, res) => res.json(await Partner.findByIdAndUpdate(req.params.id, req.body, { new: true })));
+app.delete('/api/partners/:id', requireAuth, async (req, res) => {
+  await Partner.findByIdAndDelete(req.params.id);
+  res.json({ success: true });
+});
+
+// Settings (public GET)
+app.get('/api/settings', async (_req, res) => {
+  const settings = await Settings.findOne();
+  res.json(settings || {});
+});
+app.put('/api/settings', requireAuth, async (req, res) => {
+  const existing = await Settings.findOne();
+  if (existing) {
+    const updated = await Settings.findByIdAndUpdate(existing._id, req.body, { new: true });
+    return res.json(updated);
+  }
+  res.json(await Settings.create(req.body));
+});
+
+// Media
+app.get('/api/media', requireAuth, async (_req, res) => res.json(await Media.find().sort({ createdAt: -1 })));
+app.post('/api/media', requireAuth, upload.single('file'), async (req, res) => {
+  const file = req.file;
+  if (!file) return res.status(400).json({ error: 'File required' });
+  const url = `/uploads/${file.filename}`;
+  const doc = await Media.create({ filename: file.originalname, url, mimetype: file.mimetype, size: file.size });
+  res.json(doc);
+});
+app.post('/api/media/import-assets', requireAuth, async (_req, res) => {
+  const assetsRoot = path.join(__dirname, '..', '..', 'frontend', 'public', 'assets');
+  const allowed = new Set(['.jpg', '.jpeg', '.png', '.webp', '.svg', '.gif']);
+  let created = 0;
+
+  const walk = async (dir) => {
+    const entries = await fs.readdir(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        await walk(full);
+        continue;
+      }
+      const ext = path.extname(entry.name).toLowerCase();
+      if (!allowed.has(ext)) continue;
+      const stat = await fs.stat(full);
+      const existing = await Media.findOne({ filename: entry.name, size: stat.size });
+      if (existing) continue;
+      const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`;
+      const dest = path.join(uploadsDir, unique);
+      await fs.copyFile(full, dest);
+      const url = `/uploads/${unique}`;
+      await Media.create({ filename: entry.name, url, mimetype: `image/${ext.replace('.', '')}`, size: stat.size });
+      created += 1;
+    }
+  };
+
+  try {
+    await walk(assetsRoot);
+  } catch (err) {
+    return res.status(500).json({ error: 'Failed to import assets' });
+  }
+
+  res.json({ success: true, created });
+});
+app.delete('/api/media/:id', requireAuth, async (req, res) => {
+  await Media.findByIdAndDelete(req.params.id);
+  res.json({ success: true });
+});
+
+// Messages
+app.get('/api/messages', requireAuth, async (_req, res) => res.json(await Message.find().sort({ createdAt: -1 })));
+app.patch('/api/messages/:id', requireAuth, async (req, res) => res.json(await Message.findByIdAndUpdate(req.params.id, req.body, { new: true })));
+app.delete('/api/messages/:id', requireAuth, async (req, res) => {
+  await Message.findByIdAndDelete(req.params.id);
+  res.json({ success: true });
+});
+
+// Public contact form
+app.post('/api/messages', async (req, res) => {
+  const { name, email, message } = req.body || {};
+  if (!name || !email || !message) return res.status(400).json({ error: 'Name, email, and message are required' });
+  const saved = await Message.create(req.body);
+  res.json(saved);
+});
+
+// Health
+app.get('/', (_req, res) => {
   res.json({ status: 'ok', message: 'Diyar backend running' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Backend listening on http://localhost:${PORT}`);
-});
+const start = async () => {
+  const uri = process.env.MONGODB_URI || '';
+  if (!uri) {
+    console.error('Missing MONGODB_URI in environment');
+    process.exit(1);
+  }
+  await mongoose.connect(uri);
+  await seedDefaults();
+  app.listen(PORT, () => console.log(`Backend listening on http://localhost:${PORT}`));
+};
+
+start();
+
+async function seedDefaults() {
+  const [catCount, areaCount, serviceCount, partnerCount, productCount, settingsCount] = await Promise.all([
+    Category.countDocuments(),
+    BusinessArea.countDocuments(),
+    Service.countDocuments(),
+    Partner.countDocuments(),
+    Product.countDocuments(),
+    Settings.countDocuments()
+  ]);
+
+  if (catCount === 0) await Category.insertMany(defaultCategories);
+  if (areaCount === 0) await BusinessArea.insertMany(defaultBusinessAreas);
+  if (serviceCount === 0) await Service.insertMany(defaultServices);
+  if (partnerCount === 0) await Partner.insertMany(defaultPartners);
+  if (productCount === 0) await Product.insertMany(defaultProducts);
+  if (settingsCount === 0) await Settings.create(defaultSettings);
+}

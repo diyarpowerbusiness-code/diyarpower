@@ -4,4 +4,5 @@ node_modules/
 **/dist/
 **/.vite/
 **/.env
+**/uploads/
 **/.DS_Store
