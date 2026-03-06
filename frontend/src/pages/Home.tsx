@@ -1,5 +1,6 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { ArrowRight, CheckCircle2, ShieldCheck, Truck, Clock, Award } from 'lucide-react';
+import * as Icons from 'lucide-react';
 import { CatalogProductCard, SectionHeader, ServiceCard } from '../components/UI';
 import { PARTNERS } from '../constants';
 import { Link } from 'react-router-dom';
@@ -109,29 +110,40 @@ export const Home = () => {
               {settings.heroDescription || 'Diyar Power Link LLP is a multi-vertical trading and technology solutions provider delivering reliable supply, competitive pricing, and professional support across industries.'}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 mb-10 justify-center">
-              <Link to="/products" className="bg-blue-600 text-white px-8 py-4 rounded-full font-semibold flex items-center justify-center hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 group">
-                View Products
+              <Link
+                to={settings.home?.heroPrimaryLink || '/products'}
+                className="bg-blue-600 text-white px-8 py-4 rounded-full font-semibold flex items-center justify-center hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 group"
+              >
+                {settings.home?.heroPrimaryLabel || 'View Products'}
                 <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
               </Link>
-                <Link to="/contact" className="bg-white/5 text-white border border-white/20 px-8 py-4 rounded-full font-semibold hover:bg-white/10 transition-all flex items-center justify-center backdrop-blur-sm">
-                  Contact Us
-                </Link>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {[
-                  { label: 'On‑time Delivery', icon: Truck },
-                  { label: 'Genuine Warranties', icon: ShieldCheck },
-                  { label: 'Trusted Brands', icon: Award }
-                ].map((item, i) => (
+              <Link
+                to={settings.home?.heroSecondaryLink || '/contact'}
+                className="bg-white/5 text-white border border-white/20 px-8 py-4 rounded-full font-semibold hover:bg-white/10 transition-all flex items-center justify-center backdrop-blur-sm"
+              >
+                {settings.home?.heroSecondaryLabel || 'Contact Us'}
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {(settings.home?.heroBadges?.length
+                ? settings.home.heroBadges
+                : [
+                    { title: 'On?time Delivery', description: 'Truck' },
+                    { title: 'Genuine Warranties', description: 'ShieldCheck' },
+                    { title: 'Trusted Brands', description: 'Award' }
+                  ]
+              ).map((item: any, i: number) => {
+                const Icon = (Icons as any)[item.description] || Truck;
+                return (
                   <div key={i} className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-2xl px-4 py-3">
                     <div className="w-10 h-10 rounded-xl bg-blue-600/20 flex items-center justify-center text-blue-400">
-                      <item.icon size={20} />
+                      <Icon size={20} />
                     </div>
-                    <span className="text-sm text-slate-200 font-medium">{item.label}</span>
+                    <span className="text-sm text-slate-200 font-medium">{item.title}</span>
                   </div>
-                ))}
-              </div>
-          </div>
+                );
+              })}
+            </div>
         </div>
       </section>
 
@@ -202,8 +214,8 @@ export const Home = () => {
                   </div>
                 ))}
               </div>
-              <Link to="/about" className="text-blue-600 font-semibold flex items-center hover:underline">
-                Learn more about us
+              <Link to={settings.home?.whoCtaLink || '/about'} className="text-blue-600 font-semibold flex items-center hover:underline">
+                {settings.home?.whoCtaLabel || 'Learn more about us'}
                 <ArrowRight className="ml-2" size={18} />
               </Link>
             </div>
@@ -229,7 +241,7 @@ export const Home = () => {
                     <h3 className="text-xl font-bold text-primary mb-3">{sector.title}</h3>
                     <p className="text-slate-600 text-sm leading-relaxed mb-6 flex-grow">{sector.description || sector.desc}</p>
                     <Link to={sector.link} className="inline-flex items-center justify-center bg-blue-600 text-white px-5 py-2.5 rounded-full font-semibold hover:bg-blue-700 transition-all">
-                      View Products
+                      {settings.home?.businessAreasCtaLabel || 'View Products'}
                     </Link>
                   </div>
                 </div>
@@ -244,8 +256,8 @@ export const Home = () => {
       <section className="py-20 bg-white border-y border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
-            title="Featured Products"
-            subtitle="A snapshot of our most requested product categories and solutions."
+            title={settings.home?.productsPreviewTitle || 'Featured Products'}
+            subtitle={settings.home?.productsPreviewSubtitle || 'A snapshot of our most requested product categories and solutions.'}
           />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {(products.length ? products : []).map((product: any) => (
@@ -253,8 +265,8 @@ export const Home = () => {
             ))}
           </div>
           <div className="mt-10 text-center">
-            <Link to="/products" className="inline-flex items-center text-blue-600 font-semibold hover:underline">
-              View All Products <ArrowRight className="ml-1" size={18} />
+            <Link to={settings.home?.productsPreviewCtaLink || '/products'} className="inline-flex items-center text-blue-600 font-semibold hover:underline">
+              {settings.home?.productsPreviewCtaLabel || 'View All Products'} <ArrowRight className="ml-1" size={18} />
             </Link>
           </div>
         </div>
@@ -274,7 +286,7 @@ export const Home = () => {
           </div>
           <div className="mt-12 text-center">
             <Link to="/services" className="inline-flex items-center text-blue-600 font-semibold hover:underline">
-              View All Services <ArrowRight className="ml-1" size={18} />
+              {settings.home?.servicesCtaLabel || 'View All Services'} <ArrowRight className="ml-1" size={18} />
             </Link>
           </div>
         </div>

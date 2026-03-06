@@ -5,6 +5,10 @@ import { UploadField } from './UploadField';
 import { PairsEditor } from './PairsEditor';
 import { ListEditor } from './ListEditor';
 import { useSearchParams } from 'react-router-dom';
+import { AdminBusinessAreas } from './AdminBusinessAreas';
+import { AdminServices } from './AdminServices';
+import { AdminPartners } from './AdminPartners';
+import { AdminProducts } from './AdminProducts';
 
 export const AdminHomePage = () => {
   const [searchParams] = useSearchParams();
@@ -14,6 +18,15 @@ export const AdminHomePage = () => {
     heroDescription: 'Diyar Power Link LLP is a multi-vertical trading and technology solutions provider delivering reliable supply, competitive pricing, and professional support across industries.',
     home: {
       heroBackgroundImage: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80',
+      heroPrimaryLabel: 'View Products',
+      heroPrimaryLink: '/products',
+      heroSecondaryLabel: 'Contact Us',
+      heroSecondaryLink: '/contact',
+      heroBadges: [
+        { title: 'On-time Delivery', description: 'Truck' },
+        { title: 'Genuine Warranties', description: 'ShieldCheck' },
+        { title: 'Trusted Brands', description: 'Award' }
+      ],
       businessStripItems: [
         'Trading Business B2B & B2C',
         'Import & Export',
@@ -35,10 +48,14 @@ export const AdminHomePage = () => {
       whoImage: 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80',
       whoStatValue: '10+',
       whoStatLabel: 'Years of Industry\nExperience',
+      whoCtaLabel: 'Learn more about us',
+      whoCtaLink: '/about',
       businessAreasTitle: 'Business Areas',
       businessAreasSubtitle: 'Focused expertise across our core B2B sectors.',
+      businessAreasCtaLabel: 'View Products',
       servicesTitle: 'Services',
       servicesSubtitle: 'Professional support designed for enterprise reliability.',
+      servicesCtaLabel: 'View All Services',
       whyTitle: 'Why Choose Us',
       whySubtitle: 'Consistent quality and delivery backed by technical expertise.',
       whyItems: [
@@ -48,7 +65,11 @@ export const AdminHomePage = () => {
         { title: 'Technical Expertise', description: 'Experienced team for installation, support, and guidance.' }
       ],
       partnersTitle: 'Our Technology Partners',
-      partnersSubtitle: 'We are proud to partner with world-renowned technology brands to deliver the best solutions to our clients.'
+      partnersSubtitle: 'We are proud to partner with world-renowned technology brands to deliver the best solutions to our clients.',
+      productsPreviewTitle: 'Featured Products',
+      productsPreviewSubtitle: 'A snapshot of our most requested product categories and solutions.',
+      productsPreviewCtaLabel: 'View All Products',
+      productsPreviewCtaLink: '/products'
     }
   });
   const [section, setSection] = useState('Hero Section');
@@ -109,20 +130,28 @@ export const AdminHomePage = () => {
       });
       return;
     }
+    if (section === 'Hero Buttons & Badges') {
+      setForm({ ...form, home: { ...form.home, heroPrimaryLabel: '', heroPrimaryLink: '', heroSecondaryLabel: '', heroSecondaryLink: '', heroBadges: [] } });
+      return;
+    }
     if (section === 'Background Images') {
       setForm({ ...form, home: { ...form.home, heroBackgroundImage: '', whoImage: '' } });
       return;
     }
     if (section === 'Who We Are') {
-      setForm({ ...form, home: { ...form.home, whoTitle: '', whoSubtitle: '', whoDescription: '', whoBullets: [], whoStatValue: '', whoStatLabel: '' } });
+      setForm({ ...form, home: { ...form.home, whoTitle: '', whoSubtitle: '', whoDescription: '', whoBullets: [], whoStatValue: '', whoStatLabel: '', whoCtaLabel: '', whoCtaLink: '' } });
       return;
     }
     if (section === 'Business Areas') {
-      setForm({ ...form, home: { ...form.home, businessAreasTitle: '', businessAreasSubtitle: '' } });
+      setForm({ ...form, home: { ...form.home, businessAreasTitle: '', businessAreasSubtitle: '', businessAreasCtaLabel: '' } });
       return;
     }
     if (section === 'Services Preview') {
-      setForm({ ...form, home: { ...form.home, servicesTitle: '', servicesSubtitle: '' } });
+      setForm({ ...form, home: { ...form.home, servicesTitle: '', servicesSubtitle: '', servicesCtaLabel: '' } });
+      return;
+    }
+    if (section === 'Products Preview') {
+      setForm({ ...form, home: { ...form.home, productsPreviewTitle: '', productsPreviewSubtitle: '', productsPreviewCtaLabel: '', productsPreviewCtaLink: '' } });
       return;
     }
     if (section === 'Why Choose Us') {
@@ -138,7 +167,7 @@ export const AdminHomePage = () => {
     <div>
       <h1 className="text-2xl font-bold text-slate-900 mb-6">Home Page</h1>
       <div className="flex flex-wrap gap-2 mb-6">
-        {['Hero Section', 'Background Images', 'Who We Are', 'Business Areas', 'Services Preview', 'Why Choose Us', 'Partners / Brand Logos'].map((item) => (
+        {['Hero Section', 'Hero Buttons & Badges', 'Background Images', 'Who We Are', 'Business Areas', 'Services Preview', 'Products Preview', 'Why Choose Us', 'Partners / Brand Logos'].map((item) => (
           <button
             key={item}
             type="button"
@@ -165,6 +194,25 @@ export const AdminHomePage = () => {
               addLabel="Add Strip Item"
               placeholder="Business strip text"
             />
+          </>
+        )}
+
+        {section === 'Hero Buttons & Badges' && (
+          <>
+            <h2 className="text-lg font-semibold text-slate-800">Hero Buttons & Badges</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <textarea rows={2} placeholder="Primary Button Label" value={form.home?.heroPrimaryLabel || ''} onChange={(e) => setForm({ ...form, home: { ...form.home, heroPrimaryLabel: e.target.value } })} className="border border-slate-200 rounded-xl px-3 py-2" />
+              <textarea rows={2} placeholder="Primary Button Link" value={form.home?.heroPrimaryLink || ''} onChange={(e) => setForm({ ...form, home: { ...form.home, heroPrimaryLink: e.target.value } })} className="border border-slate-200 rounded-xl px-3 py-2" />
+              <textarea rows={2} placeholder="Secondary Button Label" value={form.home?.heroSecondaryLabel || ''} onChange={(e) => setForm({ ...form, home: { ...form.home, heroSecondaryLabel: e.target.value } })} className="border border-slate-200 rounded-xl px-3 py-2" />
+              <textarea rows={2} placeholder="Secondary Button Link" value={form.home?.heroSecondaryLink || ''} onChange={(e) => setForm({ ...form, home: { ...form.home, heroSecondaryLink: e.target.value } })} className="border border-slate-200 rounded-xl px-3 py-2" />
+            </div>
+            <PairsEditor
+              label="Hero Badges (Title + Icon Name)"
+              items={form.home?.heroBadges || []}
+              onChange={(items) => setForm({ ...form, home: { ...form.home, heroBadges: items } })}
+              addLabel="Add Badge"
+            />
+            <p className="text-xs text-slate-500">Use icon names from lucide-react (e.g., Truck, ShieldCheck, Award).</p>
           </>
         )}
 
@@ -201,6 +249,10 @@ export const AdminHomePage = () => {
               <textarea rows={2} placeholder="Stat Value (e.g., 10+)" value={form.home?.whoStatValue || ''} onChange={(e) => setForm({ ...form, home: { ...form.home, whoStatValue: e.target.value } })} className="border border-slate-200 rounded-xl px-3 py-2" />
               <textarea rows={2} placeholder="Stat Label (use new lines)" value={form.home?.whoStatLabel || ''} onChange={(e) => setForm({ ...form, home: { ...form.home, whoStatLabel: e.target.value } })} className="border border-slate-200 rounded-xl px-3 py-2" />
             </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <textarea rows={2} placeholder="CTA Label" value={form.home?.whoCtaLabel || ''} onChange={(e) => setForm({ ...form, home: { ...form.home, whoCtaLabel: e.target.value } })} className="border border-slate-200 rounded-xl px-3 py-2" />
+              <textarea rows={2} placeholder="CTA Link" value={form.home?.whoCtaLink || ''} onChange={(e) => setForm({ ...form, home: { ...form.home, whoCtaLink: e.target.value } })} className="border border-slate-200 rounded-xl px-3 py-2" />
+            </div>
           </>
         )}
 
@@ -209,6 +261,10 @@ export const AdminHomePage = () => {
             <h2 className="text-lg font-semibold text-slate-800">Business Areas</h2>
             <textarea rows={2} placeholder="Business Areas Title" value={form.home?.businessAreasTitle || ''} onChange={(e) => setForm({ ...form, home: { ...form.home, businessAreasTitle: e.target.value } })} className="w-full border border-slate-200 rounded-xl px-3 py-2" />
             <textarea placeholder="Business Areas Subtitle" value={form.home?.businessAreasSubtitle || ''} onChange={(e) => setForm({ ...form, home: { ...form.home, businessAreasSubtitle: e.target.value } })} className="w-full border border-slate-200 rounded-xl px-3 py-2" />
+            <textarea rows={2} placeholder="Business Areas Button Label" value={form.home?.businessAreasCtaLabel || ''} onChange={(e) => setForm({ ...form, home: { ...form.home, businessAreasCtaLabel: e.target.value } })} className="w-full border border-slate-200 rounded-xl px-3 py-2" />
+            <div className="pt-4 border-t border-slate-200">
+              <AdminBusinessAreas embedded />
+            </div>
           </>
         )}
 
@@ -217,6 +273,23 @@ export const AdminHomePage = () => {
             <h2 className="text-lg font-semibold text-slate-800">Services Preview</h2>
             <textarea rows={2} placeholder="Services Title" value={form.home?.servicesTitle || ''} onChange={(e) => setForm({ ...form, home: { ...form.home, servicesTitle: e.target.value } })} className="w-full border border-slate-200 rounded-xl px-3 py-2" />
             <textarea placeholder="Services Subtitle" value={form.home?.servicesSubtitle || ''} onChange={(e) => setForm({ ...form, home: { ...form.home, servicesSubtitle: e.target.value } })} className="w-full border border-slate-200 rounded-xl px-3 py-2" />
+            <textarea rows={2} placeholder="Services Button Label" value={form.home?.servicesCtaLabel || ''} onChange={(e) => setForm({ ...form, home: { ...form.home, servicesCtaLabel: e.target.value } })} className="w-full border border-slate-200 rounded-xl px-3 py-2" />
+            <div className="pt-4 border-t border-slate-200">
+              <AdminServices embedded />
+            </div>
+          </>
+        )}
+
+        {section === 'Products Preview' && (
+          <>
+            <h2 className="text-lg font-semibold text-slate-800">Products Preview</h2>
+            <textarea rows={2} placeholder="Products Preview Title" value={form.home?.productsPreviewTitle || ''} onChange={(e) => setForm({ ...form, home: { ...form.home, productsPreviewTitle: e.target.value } })} className="w-full border border-slate-200 rounded-xl px-3 py-2" />
+            <textarea placeholder="Products Preview Subtitle" value={form.home?.productsPreviewSubtitle || ''} onChange={(e) => setForm({ ...form, home: { ...form.home, productsPreviewSubtitle: e.target.value } })} className="w-full border border-slate-200 rounded-xl px-3 py-2" />
+            <textarea rows={2} placeholder="Products Button Label" value={form.home?.productsPreviewCtaLabel || ''} onChange={(e) => setForm({ ...form, home: { ...form.home, productsPreviewCtaLabel: e.target.value } })} className="w-full border border-slate-200 rounded-xl px-3 py-2" />
+            <textarea rows={2} placeholder="Products Button Link" value={form.home?.productsPreviewCtaLink || ''} onChange={(e) => setForm({ ...form, home: { ...form.home, productsPreviewCtaLink: e.target.value } })} className="w-full border border-slate-200 rounded-xl px-3 py-2" />
+            <div className="pt-4 border-t border-slate-200">
+              <AdminProducts />
+            </div>
           </>
         )}
 
@@ -239,6 +312,9 @@ export const AdminHomePage = () => {
             <h2 className="text-lg font-semibold text-slate-800">Partners / Brand Logos</h2>
             <textarea rows={2} placeholder="Partners Title" value={form.home?.partnersTitle || ''} onChange={(e) => setForm({ ...form, home: { ...form.home, partnersTitle: e.target.value } })} className="w-full border border-slate-200 rounded-xl px-3 py-2" />
             <textarea placeholder="Partners Subtitle" value={form.home?.partnersSubtitle || ''} onChange={(e) => setForm({ ...form, home: { ...form.home, partnersSubtitle: e.target.value } })} className="w-full border border-slate-200 rounded-xl px-3 py-2" />
+            <div className="pt-4 border-t border-slate-200">
+              <AdminPartners embedded />
+            </div>
           </>
         )}
 

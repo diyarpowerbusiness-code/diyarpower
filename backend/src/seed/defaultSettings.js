@@ -19,6 +19,15 @@ export const defaultSettings = {
   businessHours: 'Mon - Sat: 9:00 AM - 6:00 PM',
   home: {
     heroBackgroundImage: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80',
+    heroPrimaryLabel: 'View Products',
+    heroPrimaryLink: '/products',
+    heroSecondaryLabel: 'Contact Us',
+    heroSecondaryLink: '/contact',
+    heroBadges: [
+      { title: 'On‑time Delivery', description: 'Truck' },
+      { title: 'Genuine Warranties', description: 'ShieldCheck' },
+      { title: 'Trusted Brands', description: 'Award' }
+    ],
     businessStripItems: [
       'Trading Business B2B & B2C',
       'Import & Export',
@@ -28,8 +37,10 @@ export const defaultSettings = {
     ],
     businessAreasTitle: 'Business Areas',
     businessAreasSubtitle: 'Focused expertise across our core B2B sectors.',
+    businessAreasCtaLabel: 'View Products',
     servicesTitle: 'Services',
     servicesSubtitle: 'Professional support designed for enterprise reliability.',
+    servicesCtaLabel: 'View All Services',
     whoTitle: 'Who We Are',
     whoSubtitle: 'The primary focus of Diyar is General Trading, supply of Consumables and IT consultancy.',
     whoDescription: 'Our primary focus is the General Trading supply of Consumables and IT consultancy and support of computer hardware and software, web design, program applications and services. Our team\'s experience together with long-standing manufacturer relationships makes us the ideal partner.',
@@ -44,6 +55,12 @@ export const defaultSettings = {
     whoImage: 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80',
     whoStatValue: '10+',
     whoStatLabel: 'Years of Industry\nExperience',
+    whoCtaLabel: 'Learn more about us',
+    whoCtaLink: '/about',
+    productsPreviewTitle: 'Featured Products',
+    productsPreviewSubtitle: 'A snapshot of our most requested product categories and solutions.',
+    productsPreviewCtaLabel: 'View All Products',
+    productsPreviewCtaLink: '/products',
     whyTitle: 'Why Choose Us',
     whySubtitle: 'Consistent quality and delivery backed by technical expertise.',
     whyItems: [
