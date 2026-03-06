@@ -36,16 +36,18 @@ export const Navbar = () => {
   }, []);
 
   const companyName = settings.websiteName || COMPANY_NAME;
-  const logoUrl = resolveImageUrl(settings.logo || '/logo.png');
+  const fallbackLogo = '/assets/partners/diyar-logo.jpg';
+  const rawLogo = settings.logo || '';
+  const logoUrl = rawLogo.includes('/uploads/') ? resolveImageUrl(fallbackLogo) : resolveImageUrl(rawLogo || fallbackLogo);
 
   return (
     <nav className={`sticky top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur border-b border-slate-200 py-3 shadow-sm' : 'bg-white/95 backdrop-blur border-b border-slate-200 py-4 shadow-sm'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           <Link to="/" className="flex items-center space-x-2">
-            {logoUrl ? (
-              <img src={logoUrl} alt={companyName} className="w-11 h-11 object-contain rounded-lg" />
-            ) : (
+              {logoUrl ? (
+                <img src={logoUrl} alt={companyName} className="w-11 h-11 object-contain rounded-lg" />
+              ) : (
               <div className="w-11 h-11 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-600/20">
                 <span className="text-white font-bold text-xl">D</span>
               </div>
@@ -214,8 +216,8 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           <div>
             <div className="flex items-center space-x-2 mb-6">
-              {settings.logo ? (
-                <img src={resolveImageUrl(settings.logo)} alt={companyName} className="w-8 h-8 object-contain rounded" />
+              {logoUrl ? (
+                <img src={logoUrl} alt={companyName} className="w-8 h-8 object-contain rounded" />
               ) : (
                 <div className="w-8 h-8 bg-white rounded flex items-center justify-center">
                   <span className="text-primary font-bold">D</span>
