@@ -36,7 +36,7 @@ export const Navbar = () => {
   }, []);
 
   const companyName = settings.websiteName || COMPANY_NAME;
-  const fallbackLogo = '/assets/partners/diyar-logo.jpg';
+  const fallbackLogo = '/assets/partners/diyar-logo-wide.png';
   const rawLogo = settings.logo || '';
   const logoUrl = rawLogo.includes('/uploads/') ? resolveImageUrl(fallbackLogo) : resolveImageUrl(rawLogo || fallbackLogo);
 
@@ -49,7 +49,7 @@ export const Navbar = () => {
               <img
                 src={logoUrl}
                 alt={companyName}
-                className="w-11 h-11 object-contain rounded-lg"
+                className="w-20 h-12 object-contain"
                 onError={(e) => {
                   const target = e.currentTarget;
                   if (!target.dataset.fallback) {
@@ -59,7 +59,7 @@ export const Navbar = () => {
                 }}
               />
             ) : (
-              <div className="w-11 h-11 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-600/20">
+                <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-600/20">
                 <span className="text-white font-bold text-xl">D</span>
               </div>
             )}
@@ -234,7 +234,7 @@ export const Footer = () => {
                 <img
                   src={logoUrl}
                   alt={companyName}
-                  className="w-8 h-8 object-contain rounded"
+                className="w-16 h-10 object-contain"
                   onError={(e) => {
                     const target = e.currentTarget;
                     if (!target.dataset.fallback) {
