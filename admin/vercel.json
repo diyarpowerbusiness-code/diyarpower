@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    { "source": "/admin", "destination": "/", "permanent": true },
+    { "source": "/admin/:path*", "destination": "/", "permanent": true }
+  ],
+  "rewrites": [
+    { "source": "/:path*", "destination": "/index.html" }
+  ]
+}
