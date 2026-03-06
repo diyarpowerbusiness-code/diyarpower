@@ -128,7 +128,7 @@ export const Home = () => {
               {(settings.home?.heroBadges?.length
                 ? settings.home.heroBadges
                 : [
-                    { title: 'On?time Delivery', description: 'Truck' },
+                    { title: 'On-time Delivery', description: 'Truck' },
                     { title: 'Genuine Warranties', description: 'ShieldCheck' },
                     { title: 'Trusted Brands', description: 'Award' }
                   ]
@@ -144,6 +144,7 @@ export const Home = () => {
                 );
               })}
             </div>
+          </div>
         </div>
       </section>
 
