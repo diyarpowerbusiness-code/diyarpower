@@ -10,16 +10,6 @@ import { Services } from './pages/Services';
 import { Contact } from './pages/Contact';
 import { pingApi } from './api';
 
-import { AdminLayout } from './admin/AdminLayout';
-import { AdminLogin } from './admin/AdminLogin';
-import { AdminDashboard } from './admin/AdminDashboard';
-import { AdminMedia } from './admin/AdminMedia';
-import { AdminSettings } from './admin/AdminSettings';
-import { AdminHomePage } from './admin/AdminHomePage';
-import { AdminAboutPage } from './admin/AdminAboutPage';
-import { AdminContactPage } from './admin/AdminContactPage';
-import { AdminProductsPage } from './admin/AdminProductsPage';
-import { AdminServicesPage } from './admin/AdminServicesPage';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -27,12 +17,6 @@ const ScrollToTop = () => {
     window.scrollTo(0, 0);
   }, [pathname]);
   return null;
-};
-
-const RequireAdmin = ({ children }: { children: React.ReactNode }) => {
-  const token = localStorage.getItem('admin_token');
-  if (!token) return <Navigate to="/admin/login" replace />;
-  return <>{children}</>;
 };
 
 const PublicLayout = () => (
@@ -54,25 +38,6 @@ export default function App() {
     <Router>
       <ScrollToTop />
       <Routes>
-        <Route path="/admin/login" element={<AdminLogin />} />
-        <Route
-          path="/admin"
-          element={
-            <RequireAdmin>
-              <AdminLayout />
-            </RequireAdmin>
-          }
-        >
-          <Route index element={<AdminDashboard />} />
-          <Route path="homepage" element={<AdminHomePage />} />
-          <Route path="about-page" element={<AdminAboutPage />} />
-          <Route path="products-page" element={<AdminProductsPage />} />
-          <Route path="contact-page" element={<AdminContactPage />} />
-          <Route path="services-page" element={<AdminServicesPage />} />
-          <Route path="media" element={<AdminMedia />} />
-          <Route path="settings" element={<AdminSettings />} />
-        </Route>
-
         <Route path="/" element={<PublicLayout />}>
           <Route index element={<Home />} />
           <Route path="about" element={<About />} />
