@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite --port=3001 --host=0.0.0.0",
+    "postinstall": "node scripts/sync-assets.js",
+    "prebuild": "node scripts/sync-assets.js",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "tsc --noEmit"

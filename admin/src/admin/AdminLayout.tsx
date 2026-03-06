@@ -30,7 +30,7 @@ export const AdminLayout = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
-      <aside className="w-64 bg-white border-r border-slate-200 p-6 hidden lg:block">
+      <aside className="w-64 bg-white border-r border-slate-200 p-6 hidden lg:block shadow-lg shadow-slate-200/40">
         <div className="text-lg font-bold text-slate-900 mb-8">Admin Panel</div>
         <nav className="space-y-2">
           <Link
