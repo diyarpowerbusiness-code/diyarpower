@@ -218,6 +218,9 @@ export const Footer = () => {
   }, []);
 
   const companyName = settings.websiteName || COMPANY_NAME;
+  const fallbackLogo = '/assets/partners/diyar-logo.jpg';
+  const rawLogo = settings.logo || '';
+  const logoUrl = rawLogo.includes('/uploads/') ? resolveImageUrl(fallbackLogo) : resolveImageUrl(rawLogo || fallbackLogo);
   const mapQuery = encodeURIComponent(settings.contactAddress || 'Mahabubnagar, Telangana, India');
   const mapLink = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
 
