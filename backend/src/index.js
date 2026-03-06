@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import multer from 'multer';
+import nodemailer from 'nodemailer';
 import path from 'path';
 import fs from 'fs/promises';
 import { fileURLToPath } from 'url';
@@ -66,6 +67,24 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@diyarpowerlink.com';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
 const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH || '';
 const JWT_SECRET = process.env.JWT_SECRET || 'change-this-secret';
+
+const SMTP_HOST = process.env.SMTP_HOST || '';
+const SMTP_PORT = parseInt(process.env.SMTP_PORT || '0', 10);
+const SMTP_USER = process.env.SMTP_USER || '';
+const SMTP_PASS = process.env.SMTP_PASS || '';
+const SMTP_FROM = process.env.SMTP_FROM || '';
+const CONTACT_TO = process.env.CONTACT_TO || '';
+const SMTP_SECURE = (process.env.SMTP_SECURE || '').toLowerCase() === 'true';
+
+const canSendEmail = Boolean(SMTP_HOST && SMTP_PORT && SMTP_USER && SMTP_PASS && SMTP_FROM && CONTACT_TO);
+const mailer = canSendEmail
+  ? nodemailer.createTransport({
+      host: SMTP_HOST,
+      port: SMTP_PORT,
+      secure: SMTP_SECURE || SMTP_PORT === 465,
+      auth: { user: SMTP_USER, pass: SMTP_PASS }
+    })
+  : null;
 
 const requireAuth = (req, res, next) => {
   const header = req.headers.authorization || '';
@@ -236,6 +255,31 @@ app.post('/api/messages', async (req, res) => {
   const { name, email, message } = req.body || {};
   if (!name || !email || !message) return res.status(400).json({ error: 'Name, email, and message are required' });
   const saved = await Message.create(req.body);
+
+  if (mailer) {
+    const subject = req.body.subject || 'New Contact Form Submission';
+    const phone = req.body.phone || 'N/A';
+    const lines = [
+      `Name: ${name}`,
+      `Email: ${email}`,
+      `Phone: ${phone}`,
+      `Subject: ${subject}`,
+      '',
+      'Message:',
+      req.body.message || ''
+    ];
+
+    mailer
+      .sendMail({
+        from: SMTP_FROM,
+        to: CONTACT_TO,
+        replyTo: email,
+        subject: `[Diyar Power Link] ${subject}`,
+        text: lines.join('\n')
+      })
+      .catch((err) => console.error('Email send failed', err));
+  }
+
   res.json(saved);
 });
 
