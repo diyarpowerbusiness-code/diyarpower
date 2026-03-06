@@ -25,7 +25,24 @@ dotenv.config({ override: true });
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-app.use(cors());
+const rawOrigins = process.env.CORS_ORIGINS || '';
+const allowedOrigins = rawOrigins
+  .split(',')
+  .map((value) => value.trim())
+  .filter(Boolean);
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.length === 0) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 app.use(express.json());
 
 const __filename = fileURLToPath(import.meta.url);
